@@ -31,9 +31,15 @@ public enum TournamentStatus
     Cancelled
 }
 
-/// <summary>Jenis kejadian dalam pertandingan (gol, kartu, pergantian pemain).</summary>
+/// <summary>Jenis kejadian dalam pertandingan esports Valorant.</summary>
 public enum EventType
 {
+    RoundWin,
+    Ace,
+    Clutch,
+    SpikePlant,
+    SpikeDefuse,
+    // Kompatibilitas
     Goal,
     YellowCard,
     RedCard,

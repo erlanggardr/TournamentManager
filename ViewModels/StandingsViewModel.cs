@@ -10,8 +10,8 @@ using TournamentManager.Services;
 namespace TournamentManager.ViewModels;
 
 /// <summary>
-/// ViewModel halaman Klasemen. Menghitung poin, selisih gol, dan ranking
-/// secara otomatis dari pertandingan yang sudah selesai.
+/// ViewModel halaman Klasemen. Menghitung poin, selisih map, dan ranking
+/// secara otomatis dari pertandingan yang sudah selesai (standar VLR.gg).
 /// </summary>
 public partial class StandingsViewModel : ObservableObject
 {
@@ -41,10 +41,16 @@ public partial class StandingsViewModel : ObservableObject
 
     public ObservableCollection<string> AvailableRounds { get; } = new();
 
+    private bool _isUpdatingRounds;
+
     [ObservableProperty]
     private string _selectedRound = "Semua Babak";
 
-    partial void OnSelectedRoundChanged(string value) => _ = LoadAsync();
+    partial void OnSelectedRoundChanged(string value)
+    {
+        if (_isUpdatingRounds || string.IsNullOrEmpty(value)) return;
+        _ = LoadAsync();
+    }
 
     // ── Commands ───────────────────────────────────────────────────────
 
@@ -112,11 +118,26 @@ public partial class StandingsViewModel : ObservableObject
                 .Where(t => t.Status == RegistrationStatus.Approved)
                 .ToListAsync();
 
-            // Isi pilihan babak
+            // Isi pilihan babak tanpa mereset pilihan jika tidak berubah
             var rounds = completedMatches.Select(m => m.Round).Distinct().OrderBy(r => r).ToList();
-            AvailableRounds.Clear();
-            AvailableRounds.Add("Semua Babak");
-            foreach (var r in rounds) AvailableRounds.Add(r);
+            var newRounds = new List<string> { "Semua Babak" };
+            newRounds.AddRange(rounds);
+
+            if (!AvailableRounds.SequenceEqual(newRounds))
+            {
+                _isUpdatingRounds = true;
+                try
+                {
+                    var prevSelected = SelectedRound;
+                    AvailableRounds.Clear();
+                    foreach (var r in newRounds) AvailableRounds.Add(r);
+                    SelectedRound = newRounds.Contains(prevSelected) ? prevSelected : "Semua Babak";
+                }
+                finally
+                {
+                    _isUpdatingRounds = false;
+                }
+            }
 
             // Filter berdasarkan babak yang dipilih
             var filtered = SelectedRound == "Semua Babak"

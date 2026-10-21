@@ -11,9 +11,11 @@ using TournamentManager.Services;
 namespace TournamentManager.ViewModels;
 
 /// <summary>
-/// ViewModel halaman Roster Pemain Format Esports (Valorant / Mobile Legends).
+/// ViewModel halaman Roster Pemain Format Esports Valorant.
 /// Standar 7 anggota per tim: 5 Pemain Inti, 1 Sub/Cadangan, 1 Coach.
 /// </summary>
+public record RoleOption(RosterRole Role, string DisplayName);
+
 public partial class PlayerRosterViewModel : ObservableValidator
 {
     private readonly IDbContextFactory<AppDbContext> _factory;
@@ -54,14 +56,18 @@ public partial class PlayerRosterViewModel : ObservableValidator
     public int CoachCount => Players.Count(p => p.Role == RosterRole.Coach);
 
     public string PlayerCountText =>
-        SelectedTeam is null ? "-" : $"{Players.Count} / {MaxPlayers} Anggota";
+        SelectedTeam is null ? "-" : $"{Players.Count} / {MaxPlayers}";
 
     public string RosterSummaryText =>
         SelectedTeam is null
             ? "-"
             : $"Inti: {MainCount}/5  ·  Sub: {SubCount}/1  ·  Coach: {CoachCount}/1";
 
-    partial void OnSelectedTeamChanged(Team? value) => _ = LoadPlayersAsync();
+    partial void OnSelectedTeamChanged(Team? value)
+    {
+        ResetForm();
+        _ = LoadPlayersAsync();
+    }
 
     // ── Form Fields ────────────────────────────────────────────────────
 
@@ -81,7 +87,12 @@ public partial class PlayerRosterViewModel : ObservableValidator
     [ObservableProperty]
     private RosterRole _selectedRole = RosterRole.Main;
 
-    public IEnumerable<RosterRole> AvailableRoles => Enum.GetValues<RosterRole>();
+    public IReadOnlyList<RoleOption> AvailableRoles { get; } = new List<RoleOption>
+    {
+        new(RosterRole.Main,  "Pemain Inti (Maks 5)"),
+        new(RosterRole.Sub,   "Cadangan / Sub (Maks 1)"),
+        new(RosterRole.Coach, "Pelatih / Coach (Maks 1)")
+    };
 
     // ── Mode Form ──────────────────────────────────────────────────────
 
@@ -90,7 +101,7 @@ public partial class PlayerRosterViewModel : ObservableValidator
     [NotifyPropertyChangedFor(nameof(SaveButtonText))]
     private bool _isEditing;
 
-    public string FormTitle => IsEditing ? "Edit Roster" : "Tambah Anggota Tim (7 Max)";
+    public string FormTitle => IsEditing ? "Edit Anggota Roster" : "Tambah Anggota Roster";
     public string SaveButtonText => IsEditing ? "Simpan Perubahan" : "Daftarkan ke Roster";
 
     // ── Commands ───────────────────────────────────────────────────────
@@ -168,8 +179,7 @@ public partial class PlayerRosterViewModel : ObservableValidator
             db.Players.Add(player);
             await db.SaveChangesAsync();
 
-            Players.Add(player);
-            UpdateRosterCounters();
+            await LoadPlayersAsync();
             _snackbar.Enqueue($"[{player.RoleDisplayName}] {player.InGameName} ({player.Name}) berhasil ditambahkan.");
         }
         else
@@ -182,11 +192,7 @@ public partial class PlayerRosterViewModel : ObservableValidator
             entity.Role = SelectedRole;
             await db.SaveChangesAsync();
 
-            _editingPlayer.Name = entity.Name;
-            _editingPlayer.InGameName = entity.InGameName;
-            _editingPlayer.Role = entity.Role;
-
-            UpdateRosterCounters();
+            await LoadPlayersAsync();
             _snackbar.Enqueue($"Data {entity.InGameName} berhasil diperbarui.");
         }
 

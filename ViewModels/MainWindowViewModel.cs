@@ -31,8 +31,8 @@ public partial class MainWindowViewModel : ObservableObject
         {
             new("Dashboard",              PackIconKind.ViewDashboard, typeof(DashboardViewModel)),
             new("Registrasi Tim",         PackIconKind.AccountGroup,  typeof(TeamRegistrationViewModel)),
-            new("Roster Pemain",          PackIconKind.TshirtCrew,    typeof(PlayerRosterViewModel)),
-            new("Manajemen Pertandingan", PackIconKind.SoccerField,   typeof(MatchManagementViewModel)),
+            new("Roster Pemain",          PackIconKind.AccountMultipleOutline, typeof(PlayerRosterViewModel)),
+            new("Manajemen Pertandingan", PackIconKind.GamepadVariantOutline,  typeof(MatchManagementViewModel)),
             new("Klasemen",               PackIconKind.FormatListNumbered, typeof(StandingsViewModel)),
             new("Bracket & Otomatisasi",  PackIconKind.Tournament,    typeof(BracketViewModel)),
         };

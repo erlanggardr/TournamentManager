@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <RootNamespace>TournamentManager</RootNamespace>
     <AssemblyName>TournamentManager</AssemblyName>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <ItemGroup>

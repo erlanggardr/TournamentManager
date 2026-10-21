@@ -32,16 +32,19 @@
         <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20,18" Margin="0,0,0,20">
             <WrapPanel VerticalAlignment="Center">
                 <!-- Pilihan Format -->
-                <ComboBox Width="180" Margin="0,4,14,4"
+                <ComboBox Width="230" Margin="0,4,14,4"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           materialDesign:HintAssist.Hint="Format Turnamen"
                           ItemsSource="{Binding Formats}"
-                          SelectedItem="{Binding SelectedFormat}" />
+                          SelectedValuePath="Format"
+                          SelectedValue="{Binding SelectedFormat}"
+                          DisplayMemberPath="DisplayName" />
 
                 <!-- Jumlah Grup (muncul untuk GroupStage) -->
                 <TextBox Width="120" Margin="0,4,14,4"
                          Style="{StaticResource MaterialDesignOutlinedTextBox}"
                          materialDesign:HintAssist.Hint="Jumlah Grup"
+                         IsEnabled="{Binding IsGroupStage}"
                          Text="{Binding NumberOfGroups, UpdateSourceTrigger=PropertyChanged}" />
 
                 <!-- Nama Babak / Prefix -->
@@ -107,26 +110,27 @@
                           ItemsSource="{Binding GeneratedMatches}"
                           Style="{StaticResource MaterialDesignDataGrid}"
                           AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                          CanUserResizeRows="False" HeadersVisibility="Column" SelectionMode="Single"
+                          CanUserResizeRows="False" CanUserResizeColumns="True" HeadersVisibility="Column" SelectionMode="Single"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource DividerBrush}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           Background="Transparent" BorderThickness="0" RowHeight="52"
                           Margin="12,0,12,12"
                           materialDesign:DataGridAssist.CellPadding="12,8,8,8"
                           materialDesign:DataGridAssist.ColumnHeaderPadding="12,8,8,8">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Babak" Binding="{Binding Round}" Width="1.5*"
+                        <DataGridTextColumn Header="Babak" Binding="{Binding Round}" Width="1.5*" MinWidth="110"
                                             ElementStyle="{StaticResource BoldCellStyle}" />
-                        <DataGridTextColumn Header="Grup" Binding="{Binding GroupName}" Width="0.8*"
+                        <DataGridTextColumn Header="Grup" Binding="{Binding GroupName}" Width="0.8*" MinWidth="75"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
-                        <DataGridTextColumn Header="Tim A" Binding="{Binding TeamAName}" Width="2*"
+                        <DataGridTextColumn Header="Tim A" Binding="{Binding TeamAName}" Width="2*" MinWidth="120"
                                             ElementStyle="{StaticResource BoldCellStyle}" />
-                        <DataGridTextColumn Header="VS" Binding="{Binding ScoreText}" Width="1*"
+                        <DataGridTextColumn Header="VS" Binding="{Binding ScoreText}" Width="1*" MinWidth="65"
                                             ElementStyle="{StaticResource BoldCellStyle}" />
-                        <DataGridTextColumn Header="Tim B" Binding="{Binding TeamBName}" Width="2*"
+                        <DataGridTextColumn Header="Tim B" Binding="{Binding TeamBName}" Width="2*" MinWidth="120"
                                             ElementStyle="{StaticResource BoldCellStyle}" />
-                        <DataGridTextColumn Header="Jadwal" Binding="{Binding ScheduledAt, StringFormat={}{0:dd MMM yyyy · HH:mm}}" Width="1.5*"
+                        <DataGridTextColumn Header="Jadwal" Binding="{Binding ScheduledAt, StringFormat={}{0:dd MMM yyyy · HH:mm}}" Width="1.5*" MinWidth="125"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*"
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*" MinWidth="85"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>

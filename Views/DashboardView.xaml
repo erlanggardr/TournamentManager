@@ -99,7 +99,7 @@
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="Pertandingan Selesai" Foreground="#D1FAE5" FontSize="14" FontWeight="Medium" />
                         <TextBlock Text="{Binding CompletedMatches}" Foreground="White" FontSize="46" FontWeight="Bold" Margin="0,4,0,0" />
-                        <TextBlock Text="telah completed" Foreground="#A7F3D0" FontSize="13" />
+                        <TextBlock Text="telah selesai" Foreground="#A7F3D0" FontSize="13" />
                     </StackPanel>
                     <Border HorizontalAlignment="Right" VerticalAlignment="Top" Width="52" Height="52"
                             CornerRadius="26" Background="#33FFFFFF">
@@ -144,24 +144,25 @@
                           ItemsSource="{Binding LiveMatches}"
                           Style="{StaticResource MaterialDesignDataGrid}"
                           AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                          CanUserResizeRows="False" HeadersVisibility="Column"
+                          CanUserResizeRows="False" CanUserResizeColumns="True" HeadersVisibility="Column"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource DividerBrush}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           Background="Transparent" BorderThickness="0" RowHeight="52"
                           Margin="12,0,12,12"
                           materialDesign:DataGridAssist.CellPadding="12,8,8,8"
                           materialDesign:DataGridAssist.ColumnHeaderPadding="12,8,8,8">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Babak" Binding="{Binding Round}" Width="1.2*"
+                        <DataGridTextColumn Header="Babak" Binding="{Binding Round}" Width="1.2*" MinWidth="110"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
-                        <DataGridTextColumn Header="Tim A" Binding="{Binding TeamAName}" Width="2*"
+                        <DataGridTextColumn Header="Tim A" Binding="{Binding TeamAName}" Width="2*" MinWidth="120"
                                             ElementStyle="{StaticResource TeamCellStyle}" />
-                        <DataGridTextColumn Header="Skor" Binding="{Binding ScoreText}" Width="1.2*"
+                        <DataGridTextColumn Header="Skor" Binding="{Binding ScoreText}" Width="1.2*" MinWidth="75"
                                             ElementStyle="{StaticResource ScoreCellStyle}" />
-                        <DataGridTextColumn Header="Tim B" Binding="{Binding TeamBName}" Width="2*"
+                        <DataGridTextColumn Header="Tim B" Binding="{Binding TeamBName}" Width="2*" MinWidth="120"
                                             ElementStyle="{StaticResource TeamCellStyle}" />
-                        <DataGridTextColumn Header="Mulai" Binding="{Binding StartedAt, StringFormat={}{0:HH:mm}}" Width="*"
+                        <DataGridTextColumn Header="Mulai" Binding="{Binding StartedAt, StringFormat={}{0:HH:mm}}" Width="*" MinWidth="60"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
-                        <DataGridTextColumn Header="Berjalan" Binding="{Binding ElapsedText}" Width="*"
+                        <DataGridTextColumn Header="Berjalan" Binding="{Binding ElapsedText}" Width="*" MinWidth="70"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
@@ -169,7 +170,7 @@
                 <!-- Empty state -->
                 <StackPanel Grid.Row="1" Style="{StaticResource EmptyStateStyle}"
                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <materialDesign:PackIcon Kind="SoccerField" Width="48" Height="48" HorizontalAlignment="Center"
+                    <materialDesign:PackIcon Kind="GamepadVariantOutline" Width="48" Height="48" HorizontalAlignment="Center"
                                              Foreground="#CBD5E1" />
                     <TextBlock Text="Belum ada pertandingan yang sedang berjalan" Margin="0,8,0,0"
                                Foreground="{StaticResource TextMutedBrush}" />

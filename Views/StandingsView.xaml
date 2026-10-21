@@ -45,14 +45,19 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
                 <TextBlock Text="Klasemen Turnamen Valorant" Style="{StaticResource PageTitleStyle}" />
-                <TextBlock Text="Format standar VLR.gg · Urutan dihitung berdasarkan Match W-L, Win Rate (%), Map Differential (Δ), dan Poin VCT (1 Win = 1 Pt)"
-                           Style="{StaticResource PageSubtitleStyle}" />
+                <TextBlock Text="Format standar VLR.gg · Urutan dihitung dari Match W-L, Win Rate (%), Map Differential (Δ), dan Poin VCT (1 Win = 1 Pt)"
+                           Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" />
             </StackPanel>
 
             <!-- Aksi & Filter -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <!-- Filter Babak -->
                 <ComboBox Width="160" Margin="0,0,12,0"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
@@ -89,28 +94,29 @@
                 <DataGrid ItemsSource="{Binding Standings}"
                           Style="{StaticResource MaterialDesignDataGrid}"
                           AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                          CanUserResizeRows="False" HeadersVisibility="Column" SelectionMode="Single"
+                          CanUserResizeRows="False" CanUserResizeColumns="True" HeadersVisibility="Column" SelectionMode="Single"
                           GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource DividerBrush}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                           Background="Transparent" BorderThickness="0" RowHeight="52"
                           Margin="12,8,12,12"
                           materialDesign:DataGridAssist.CellPadding="12,8,8,8"
                           materialDesign:DataGridAssist.ColumnHeaderPadding="12,8,8,8">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Pos" Binding="{Binding Rank}" Width="55"
+                        <DataGridTextColumn Header="Pos" Binding="{Binding Rank}" Width="50"
                                             ElementStyle="{StaticResource RankCellStyle}" />
-                        <DataGridTextColumn Header="Tim" Binding="{Binding TeamName}" Width="2.5*"
+                        <DataGridTextColumn Header="Tim" Binding="{Binding TeamName}" Width="2*" MinWidth="130"
                                             ElementStyle="{StaticResource TeamCellStyle}" />
-                        <DataGridTextColumn Header="M" Binding="{Binding MatchesPlayed}" Width="55"
+                        <DataGridTextColumn Header="M" Binding="{Binding MatchesPlayed}" Width="50"
                                             ElementStyle="{StaticResource NumCellStyle}" />
-                        <DataGridTextColumn Header="Match W - L" Binding="{Binding MatchRecord}" Width="1.2*"
-                                            ElementStyle="{StaticResource TeamCellStyle}" />
-                        <DataGridTextColumn Header="Win %" Binding="{Binding WinRate}" Width="1*"
+                        <DataGridTextColumn Header="Match W - L" Binding="{Binding MatchRecord}" Width="1.1*" MinWidth="90"
                                             ElementStyle="{StaticResource NumCellStyle}" />
-                        <DataGridTextColumn Header="Map W - L" Binding="{Binding MapRecord}" Width="1.2*"
+                        <DataGridTextColumn Header="Win %" Binding="{Binding WinRate}" Width="0.9*" MinWidth="70"
                                             ElementStyle="{StaticResource NumCellStyle}" />
-                        <DataGridTextColumn Header="Map Diff (Δ)" Binding="{Binding MapDiff, StringFormat={}{0:+0;-0;0}}" Width="1.2*"
+                        <DataGridTextColumn Header="Map W - L" Binding="{Binding MapRecord}" Width="1.1*" MinWidth="90"
                                             ElementStyle="{StaticResource NumCellStyle}" />
-                        <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="70"
+                        <DataGridTextColumn Header="Map Diff (Δ)" Binding="{Binding MapDiff, StringFormat={}{0:+0;-0;0}}" Width="1.1*" MinWidth="95"
+                                            ElementStyle="{StaticResource NumCellStyle}" />
+                        <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="65"
                                             ElementStyle="{StaticResource PointsCellStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>

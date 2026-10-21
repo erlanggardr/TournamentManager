@@ -17,7 +17,7 @@ public partial class MatchManagementView : UserControl
 
     private void OnCardPreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.LeftButton == MouseButtonState.Pressed)
+        if (e.LeftButton == MouseButtonState.Pressed && !IsInsideButton(e.OriginalSource as DependencyObject))
         {
             _dragStartPoint = e.GetPosition(null);
         }
@@ -25,7 +25,7 @@ public partial class MatchManagementView : UserControl
 
     private void OnCardPreviewMouseMove(object sender, MouseEventArgs e)
     {
-        if (e.LeftButton != MouseButtonState.Pressed) return;
+        if (e.LeftButton != MouseButtonState.Pressed || IsInsideButton(e.OriginalSource as DependencyObject)) return;
 
         Point currentPosition = e.GetPosition(null);
         Vector diff = _dragStartPoint - currentPosition;
@@ -38,6 +38,19 @@ public partial class MatchManagementView : UserControl
                 DragDrop.DoDragDrop(element, match, DragDropEffects.Move);
             }
         }
+    }
+
+    private static bool IsInsideButton(DependencyObject? obj)
+    {
+        while (obj != null)
+        {
+            if (obj is System.Windows.Controls.Primitives.ButtonBase) return true;
+            if (obj is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D)
+                obj = System.Windows.Media.VisualTreeHelper.GetParent(obj);
+            else
+                obj = LogicalTreeHelper.GetParent(obj);
+        }
+        return false;
     }
 
     private void OnColumnDragOver(object sender, DragEventArgs e)

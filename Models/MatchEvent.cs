@@ -3,8 +3,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace TournamentManager.Models;
 
 /// <summary>
-/// Riwayat kejadian dalam pertandingan: gol, kartu, pergantian pemain.
-/// Setiap kejadian dicatat beserta menit terjadinya.
+/// Riwayat kejadian dalam pertandingan: round win, ace, clutch, spike plant/defuse.
+/// Setiap kejadian dicatat beserta menit/ronde terjadinya.
 /// </summary>
 public partial class MatchEvent : ObservableObject
 {
@@ -22,7 +22,7 @@ public partial class MatchEvent : ObservableObject
     public Player? Player { get; set; }
 
     [ObservableProperty]
-    private EventType _eventType = EventType.Goal;
+    private EventType _eventType = EventType.RoundWin;
 
     [ObservableProperty]
     private int _minute;
@@ -35,16 +35,21 @@ public partial class MatchEvent : ObservableObject
     /// <summary>Label singkat untuk ditampilkan di timeline.</summary>
     public string EventLabel => EventType switch
     {
-        EventType.Goal        => "⚽ Gol",
-        EventType.OwnGoal     => "⚽ Gol Bunuh Diri",
-        EventType.PenaltyGoal => "⚽ Penalti",
-        EventType.YellowCard  => "🟨 Kartu Kuning",
-        EventType.RedCard     => "🟥 Kartu Merah",
+        EventType.RoundWin    => "🎯 Round Won",
+        EventType.Ace         => "⭐ Ace",
+        EventType.Clutch      => "🔥 Clutch",
+        EventType.SpikePlant  => "💣 Spike Planted",
+        EventType.SpikeDefuse => "🛡️ Spike Defused",
+        EventType.Goal        => "🎯 Round Won",
+        EventType.OwnGoal     => "🎯 Round Lost",
+        EventType.PenaltyGoal => "🎯 Round Won",
+        EventType.YellowCard  => "⚠️ Warning",
+        EventType.RedCard     => "🚫 Penalty",
         EventType.Substitution => "🔄 Pergantian",
         _                     => EventType.ToString()
     };
 
-    /// <summary>Teks ringkas untuk timeline: "45' ⚽ Gol — Nama Pemain".</summary>
+    /// <summary>Teks ringkas untuk timeline: "12' 🎯 Round Won — Nama Pemain".</summary>
     public string TimelineText =>
         $"{Minute}' {EventLabel}" +
         (Player is not null ? $" — {Player.Name}" : string.Empty) +

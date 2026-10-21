@@ -99,20 +99,30 @@ public class BackupService
             await using (var killCmd = new SqlCommand(killSql, conn) { CommandTimeout = 60 })
                 await killCmd.ExecuteNonQueryAsync();
 
-            // Restore database
-            var restoreSql = $"""
-                RESTORE DATABASE [{dbName}]
-                FROM DISK = N'{backupPath}'
-                WITH REPLACE, STATS = 10;
-                """;
+            try
+            {
+                // Restore database
+                var restoreSql = $"""
+                    RESTORE DATABASE [{dbName}]
+                    FROM DISK = N'{backupPath}'
+                    WITH REPLACE, STATS = 10;
+                    """;
 
-            await using (var restoreCmd = new SqlCommand(restoreSql, conn) { CommandTimeout = 600 })
-                await restoreCmd.ExecuteNonQueryAsync();
-
-            // Kembalikan ke multi-user
-            var multiSql = $"ALTER DATABASE [{dbName}] SET MULTI_USER;";
-            await using (var multiCmd = new SqlCommand(multiSql, conn) { CommandTimeout = 60 })
+                await using (var restoreCmd = new SqlCommand(restoreSql, conn) { CommandTimeout = 600 })
+                    await restoreCmd.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                // Selalu kembalikan ke multi-user bahkan jika restore gagal
+                var multiSql = $"""
+                    IF EXISTS (SELECT 1 FROM sys.databases WHERE name = N'{dbName}')
+                    BEGIN
+                        ALTER DATABASE [{dbName}] SET MULTI_USER;
+                    END
+                    """;
+                await using var multiCmd = new SqlCommand(multiSql, conn) { CommandTimeout = 60 };
                 await multiCmd.ExecuteNonQueryAsync();
+            }
         });
     }
 }

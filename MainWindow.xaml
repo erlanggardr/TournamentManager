@@ -81,7 +81,7 @@
                             </Border>
                             <TextBlock Text="{Binding AppTitle}" Margin="12,0,0,0" FontSize="17" FontWeight="SemiBold"
                                        VerticalAlignment="Center" />
-                            <TextBlock Text="Sistem Informasi Manajemen Turnamen" Margin="12,2,0,0" FontSize="12"
+                            <TextBlock Text="Sistem Informasi Manajemen Turnamen Esports Valorant" Margin="12,2,0,0" FontSize="12"
                                        Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
                         </StackPanel>
 
@@ -105,20 +105,20 @@
                 <!-- ============ BODY ============ -->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="248" />
+                        <ColumnDefinition Width="276" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Sidebar -->
                     <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
-                        <Grid Margin="16,24,16,16">
+                        <Grid Margin="12,24,12,16">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0" Text="MENU" Margin="16,0,0,10" FontSize="11" FontWeight="SemiBold"
+                            <TextBlock Grid.Row="0" Text="MENU" Margin="14,0,0,10" FontSize="11" FontWeight="SemiBold"
                                        Foreground="#8B90C4" />
 
                             <ListBox Grid.Row="1"
@@ -132,8 +132,9 @@
                                         <StackPanel Orientation="Horizontal">
                                             <materialDesign:PackIcon Kind="{Binding Icon}" Width="22" Height="22"
                                                                      VerticalAlignment="Center" />
-                                            <TextBlock Text="{Binding Title}" Margin="14,0,0,0" FontSize="14"
-                                                       FontWeight="Medium" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding Title}" Margin="12,0,0,0" FontSize="14"
+                                                       FontWeight="Medium" VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
@@ -171,7 +172,7 @@
                                 </Button>
 
                                 <TextBlock Text="v2.0 · .NET 10 · SQL Server" FontSize="11"
-                                           Foreground="#8B90C4" Margin="16,10,0,0" />
+                                           Foreground="#8B90C4" Margin="14,10,0,0" />
                             </StackPanel>
                         </Grid>
                     </Border>

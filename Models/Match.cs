@@ -50,7 +50,7 @@ public partial class Match : ObservableObject
     public int? TournamentId { get; set; }
     public Tournament? Tournament { get; set; }
 
-    /// <summary>Daftar kejadian dalam pertandingan (gol, kartu, pergantian pemain).</summary>
+    /// <summary>Daftar kejadian dalam pertandingan (round win, ace, clutch, spike plant/defuse, pergantian pemain).</summary>
     public List<MatchEvent> Events { get; set; } = new();
 
     public string TeamAName => TeamA?.Name ?? "-";

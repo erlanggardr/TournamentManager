@@ -46,8 +46,14 @@ public partial class MatchManagementViewModel : ObservableObject
 
     public ObservableCollection<string> AvailableRounds { get; } = new();
 
+    private bool _isUpdatingRounds;
+
     partial void OnSearchTextChanged(string value) => RebuildBoards();
-    partial void OnSelectedRoundFilterChanged(string value) => RebuildBoards();
+    partial void OnSelectedRoundFilterChanged(string value)
+    {
+        if (_isUpdatingRounds || string.IsNullOrEmpty(value)) return;
+        RebuildBoards();
+    }
 
     // ---------- Form pertandingan baru ----------
     public ObservableCollection<Team> ApprovedTeams { get; } = new();
@@ -288,11 +294,26 @@ public partial class MatchManagementViewModel : ObservableObject
             ApprovedTeams.Clear();
             foreach (var team in teams) ApprovedTeams.Add(team);
 
-            // Isi pilihan filter babak
+            // Isi pilihan filter babak tanpa mereset pilihan aktif jika tidak berubah
             var rounds = _allMatches.Select(m => m.Round).Distinct().OrderBy(r => r).ToList();
-            AvailableRounds.Clear();
-            AvailableRounds.Add("Semua Babak");
-            foreach (var r in rounds) AvailableRounds.Add(r);
+            var newRounds = new List<string> { "Semua Babak" };
+            newRounds.AddRange(rounds);
+
+            if (!AvailableRounds.SequenceEqual(newRounds))
+            {
+                _isUpdatingRounds = true;
+                try
+                {
+                    var prevSelected = SelectedRoundFilter;
+                    AvailableRounds.Clear();
+                    foreach (var r in newRounds) AvailableRounds.Add(r);
+                    SelectedRoundFilter = newRounds.Contains(prevSelected) ? prevSelected : "Semua Babak";
+                }
+                finally
+                {
+                    _isUpdatingRounds = false;
+                }
+            }
 
             RebuildBoards();
         }

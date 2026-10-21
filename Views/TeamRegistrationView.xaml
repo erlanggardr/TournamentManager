@@ -54,10 +54,14 @@
         <Style x:Key="BoldCellStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
         </Style>
         <Style x:Key="MutedCellStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
         </Style>
     </UserControl.Resources>
 
@@ -74,14 +78,14 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="360" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- ============ FORM ============ -->
             <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0" VerticalAlignment="Top">
-                <StackPanel Margin="24">
+                <StackPanel Margin="20">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,22">
                         <Border Width="38" Height="38" CornerRadius="12" Background="#EEF2FF">
                             <materialDesign:PackIcon Kind="AccountPlus" Width="22" Height="22"
@@ -131,18 +135,23 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="24,20,24,8">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Grid Grid.Row="0" Margin="20,18,20,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
                             <TextBlock Text="Daftar Tim" Style="{StaticResource SectionTitleStyle}" />
                             <Border CornerRadius="10" Background="#EEF2FF" Padding="10,2" Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Teams.Count}" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="Magnify" Width="22" Height="22" VerticalAlignment="Center"
                                                      Foreground="{StaticResource TextMutedBrush}" />
-                            <TextBox Width="180" Margin="6,0,12,0" materialDesign:HintAssist.Hint="Cari tim / kapten..."
+                            <TextBox Width="160" Margin="6,0,12,0" materialDesign:HintAssist.Hint="Cari tim / kapten..."
                                      Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
                             <Button Height="36" Margin="0,0,6,0"
@@ -171,24 +180,25 @@
                               ItemsSource="{Binding TeamsView}"
                               Style="{StaticResource MaterialDesignDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                              CanUserResizeRows="False" HeadersVisibility="Column" SelectionMode="Single"
+                              CanUserResizeRows="False" CanUserResizeColumns="True" HeadersVisibility="Column" SelectionMode="Single"
                               GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource DividerBrush}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               Background="Transparent" BorderThickness="0" RowHeight="56"
                               Margin="12,0,12,12"
                               materialDesign:DataGridAssist.CellPadding="12,8,8,8"
                               materialDesign:DataGridAssist.ColumnHeaderPadding="12,8,8,8">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Nama Tim" Binding="{Binding Name}" Width="1.6*"
+                            <DataGridTextColumn Header="Nama Tim" Binding="{Binding Name}" Width="1.6*" MinWidth="110"
                                                 ElementStyle="{StaticResource BoldCellStyle}" />
-                            <DataGridTextColumn Header="Kapten" Binding="{Binding CaptainName}" Width="1.4*"
+                            <DataGridTextColumn Header="Kapten" Binding="{Binding CaptainName}" Width="1.4*" MinWidth="100"
                                                 ElementStyle="{StaticResource MutedCellStyle}" />
-                            <DataGridTextColumn Header="Kontak" Binding="{Binding Contact}" Width="1.3*"
+                            <DataGridTextColumn Header="Kontak" Binding="{Binding Contact}" Width="1.2*" MinWidth="95"
                                                 ElementStyle="{StaticResource MutedCellStyle}" />
-                            <DataGridTextColumn Header="Tgl Daftar" Binding="{Binding RegisteredAt, StringFormat={}{0:dd MMM yyyy}}" Width="1.2*"
+                            <DataGridTextColumn Header="Tgl Daftar" Binding="{Binding RegisteredAt, StringFormat={}{0:dd MMM yyyy}}" Width="1.1*" MinWidth="90"
                                                 ElementStyle="{StaticResource MutedCellStyle}" />
-                            <DataGridTemplateColumn Header="Status" Width="1.2*"
+                            <DataGridTemplateColumn Header="Status" Width="Auto" MinWidth="90"
                                                     CellTemplate="{StaticResource StatusChipTemplate}" />
-                            <DataGridTemplateColumn Header="Aksi" Width="170">
+                            <DataGridTemplateColumn Header="Aksi" Width="Auto" MinWidth="140">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

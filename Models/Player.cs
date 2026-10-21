@@ -13,12 +13,15 @@ public partial class Player : ObservableObject
     public Team? Team { get; set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DisplayName))]
     private string _name = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DisplayName))]
     private string _inGameName = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RoleDisplayName))]
     private RosterRole _role = RosterRole.Main;
 
     [ObservableProperty]

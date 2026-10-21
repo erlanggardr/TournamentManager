@@ -57,10 +57,14 @@
         <Style x:Key="BoldCellStyle" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
         </Style>
         <Style x:Key="MutedCellStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
         </Style>
     </UserControl.Resources>
 
@@ -72,15 +76,20 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Roster Tim Esports (Valorant / Mobile Legends)" Style="{StaticResource PageTitleStyle}" />
-                <TextBlock Text="Format standar turnamen: 7 anggota per tim (5 Pemain Inti, 1 Cadangan/Sub, 1 Coach)" Style="{StaticResource PageSubtitleStyle}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,16,0">
+                <TextBlock Text="Roster Tim Valorant" Style="{StaticResource PageTitleStyle}" />
+                <TextBlock Text="Format standar VCT: 7 anggota per tim (5 Pemain Inti, 1 Cadangan/Sub, 1 Coach)"
+                           Style="{StaticResource PageSubtitleStyle}" TextWrapping="Wrap" />
             </StackPanel>
 
             <!-- Pilihan Tim Aktif -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <TextBlock Text="Pilih Tim:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,10,0" />
-                <ComboBox Width="220"
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <ComboBox Width="210"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           materialDesign:HintAssist.Hint="Pilih Tim"
                           ItemsSource="{Binding Teams}"
@@ -92,14 +101,14 @@
         <!-- Body -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="350" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="290" />
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!-- Form Tambah/Edit Roster -->
             <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0" VerticalAlignment="Top">
-                <StackPanel Margin="24">
+                <StackPanel Margin="18">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
                         <Border Width="38" Height="38" CornerRadius="12" Background="#EEF2FF">
                             <materialDesign:PackIcon Kind="AccountPlus" Width="22" Height="22"
@@ -107,7 +116,7 @@
                                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <TextBlock Text="{Binding FormTitle}" Style="{StaticResource SectionTitleStyle}"
-                                   Margin="12,0,0,0" VerticalAlignment="Center" />
+                                   Margin="10,0,0,0" VerticalAlignment="Center" TextWrapping="Wrap" />
                     </StackPanel>
 
                     <!-- Pilihan Peran Esports -->
@@ -115,7 +124,9 @@
                               materialDesign:HintAssist.Hint="Peran Roster (Inti / Sub / Coach)"
                               Margin="0,0,0,16"
                               ItemsSource="{Binding AvailableRoles}"
-                              SelectedItem="{Binding SelectedRole}" />
+                              SelectedValuePath="Role"
+                              SelectedValue="{Binding SelectedRole}"
+                              DisplayMemberPath="DisplayName" />
 
                     <!-- In-Game Name (IGN) -->
                     <TextBox Style="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -150,8 +161,13 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="24,18,24,8">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Grid Grid.Row="0" Margin="20,18,20,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
                             <TextBlock Text="Susunan Roster" Style="{StaticResource SectionTitleStyle}" />
                             <Border CornerRadius="10" Background="#EEF2FF" Padding="10,2" Margin="12,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding PlayerCountText}" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
@@ -159,7 +175,7 @@
                         </StackPanel>
 
                         <!-- Breakdown kuota per peran -->
-                        <Border HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="10"
+                        <Border Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" CornerRadius="10"
                                 Background="#F1F5F9" Padding="12,4">
                             <TextBlock Text="{Binding RosterSummaryText}" FontSize="12" FontWeight="SemiBold"
                                        Foreground="{StaticResource TextMutedBrush}" />
@@ -170,20 +186,21 @@
                               ItemsSource="{Binding Players}"
                               Style="{StaticResource MaterialDesignDataGrid}"
                               AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
-                              CanUserResizeRows="False" HeadersVisibility="Column" SelectionMode="Single"
+                              CanUserResizeRows="False" CanUserResizeColumns="True" HeadersVisibility="Column" SelectionMode="Single"
                               GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource DividerBrush}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               Background="Transparent" BorderThickness="0" RowHeight="52"
                               Margin="12,0,12,12"
                               materialDesign:DataGridAssist.CellPadding="12,8,8,8"
                               materialDesign:DataGridAssist.ColumnHeaderPadding="12,8,8,8">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Peran" Width="150"
+                            <DataGridTemplateColumn Header="Peran" Width="Auto" MinWidth="110"
                                                     CellTemplate="{StaticResource RoleChipTemplate}" />
-                            <DataGridTextColumn Header="In-Game Name (IGN)" Binding="{Binding InGameName}" Width="2*"
+                            <DataGridTextColumn Header="In-Game Name (IGN)" Binding="{Binding InGameName}" Width="1.2*" MinWidth="130"
                                                 ElementStyle="{StaticResource BoldCellStyle}" />
-                            <DataGridTextColumn Header="Nama Asli" Binding="{Binding Name}" Width="2*"
+                            <DataGridTextColumn Header="Nama Lengkap" Binding="{Binding Name}" Width="1.5*" MinWidth="130"
                                                 ElementStyle="{StaticResource MutedCellStyle}" />
-                            <DataGridTemplateColumn Header="Aksi" Width="100">
+                            <DataGridTemplateColumn Header="Aksi" Width="Auto" MinWidth="85">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

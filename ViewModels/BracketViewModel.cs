@@ -13,6 +13,8 @@ namespace TournamentManager.ViewModels;
 /// ViewModel halaman Bracket/Penjadwalan Otomatis.
 /// Mendukung format Single Elimination dan Group Stage.
 /// </summary>
+public record FormatOption(TournamentType Format, string DisplayName);
+
 public partial class BracketViewModel : ObservableObject
 {
     private readonly IDbContextFactory<AppDbContext> _factory;
@@ -37,7 +39,10 @@ public partial class BracketViewModel : ObservableObject
     public ObservableCollection<Team> ApprovedTeams { get; } = new();
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGroupStage))]
     private TournamentType _selectedFormat = TournamentType.SingleElimination;
+
+    public bool IsGroupStage => SelectedFormat == TournamentType.GroupStage;
 
     [ObservableProperty]
     private int _numberOfGroups = 2;
@@ -54,8 +59,12 @@ public partial class BracketViewModel : ObservableObject
     [ObservableProperty]
     private bool _isLoading;
 
-    public IEnumerable<TournamentType> Formats =>
-        Enum.GetValues<TournamentType>();
+    public IReadOnlyList<FormatOption> Formats { get; } = new List<FormatOption>
+    {
+        new(TournamentType.SingleElimination, "Sistem Gugur (Single Elimination)"),
+        new(TournamentType.GroupStage,        "Babak Grup (Group Stage)"),
+        new(TournamentType.RoundRobin,       "Round Robin Penuh")
+    };
 
     // ── Commands ───────────────────────────────────────────────────────
 
@@ -68,9 +77,31 @@ public partial class BracketViewModel : ObservableObject
             return;
         }
 
-        var formatLabel = SelectedFormat == TournamentType.SingleElimination
-            ? "Single Elimination"
-            : $"Group Stage ({NumberOfGroups} grup)";
+        if (SelectedFormat == TournamentType.GroupStage)
+        {
+            if (NumberOfGroups <= 0)
+            {
+                _snackbar.Enqueue("Jumlah grup harus minimal 1.");
+                return;
+            }
+            if (NumberOfGroups > ApprovedTeams.Count / 2)
+            {
+                _snackbar.Enqueue($"Jumlah grup ({NumberOfGroups}) terlalu banyak. Setiap grup membutuhkan minimal 2 tim (maksimal {ApprovedTeams.Count / 2} grup untuk {ApprovedTeams.Count} tim).");
+                return;
+            }
+        }
+
+        if (MinutesBetweenMatches <= 0)
+        {
+            MinutesBetweenMatches = 90;
+        }
+
+        var formatLabel = SelectedFormat switch
+        {
+            TournamentType.SingleElimination => "Single Elimination",
+            TournamentType.GroupStage        => $"Group Stage ({NumberOfGroups} grup)",
+            _                                => "Round Robin"
+        };
 
         var confirmed = await _dialog.ConfirmAsync(
             "Buat Bracket Otomatis",

@@ -1,0 +1,18 @@
+## Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.userprefs
+*.suo
+*.ide/
+
+## MSBuild & Temporary WPF files
+*_wpftmp.*
+*.log
+msbuild.log

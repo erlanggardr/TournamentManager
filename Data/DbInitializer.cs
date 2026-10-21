@@ -115,13 +115,13 @@ public static class DbInitializer
         db.Matches.AddRange(matches);
         db.SaveChanges();
 
-        // ── Buat kejadian contoh untuk pertandingan selesai ──────────
+        // ── Buat kejadian contoh untuk pertandingan selesai (Valorant) ──────────
         db.MatchEvents.AddRange(
-            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.Goal,       Minute = 12, Note = "Tendangan bebas" },
-            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.Goal,       Minute = 34, Note = "" },
-            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[1].Id, EventType = EventType.Goal,       Minute = 45, Note = "Umpan balik" },
-            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.Goal,       Minute = 78, Note = "Penalti" },
-            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[1].Id, EventType = EventType.YellowCard, Minute = 55, Note = "" }
+            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.RoundWin,    Minute = 1, Note = "Pistol Round Won" },
+            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.Ace,         Minute = 4, Note = "f0rsakeN Ace (Vandal)" },
+            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[1].Id, EventType = EventType.Clutch,      Minute = 7, Note = "TenZ 1v3 Clutch" },
+            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.SpikeDefuse, Minute = 11, Note = "Defuse detik terakhir" },
+            new MatchEvent { MatchId = matches[0].Id, TeamId = teams[0].Id, EventType = EventType.RoundWin,    Minute = 13, Note = "Match Point" }
         );
         db.SaveChanges();
     }
