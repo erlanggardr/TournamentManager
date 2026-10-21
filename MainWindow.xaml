@@ -1,0 +1,190 @@
+<Window x:Class="TournamentManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:TournamentManager.ViewModels"
+        xmlns:views="clr-namespace:TournamentManager.Views"
+        Title="Tournament Manager"
+        Width="1320" Height="780" MinWidth="1080" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="{StaticResource AppBackgroundBrush}"
+        FontFamily="Segoe UI" FontSize="14"
+        TextElement.Foreground="{StaticResource TextStrongBrush}">
+
+    <!-- Top bar (56px) berfungsi sebagai area drag/snap jendela. Tombol harus ditandai IsHitTestVisibleInChrome. -->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="56" ResizeBorderThickness="6" GlassFrameThickness="0"
+                      CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <!-- ViewModel -> View, lengkap dengan animasi transisi saat halaman berganti -->
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:DashboardView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:TeamRegistrationViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:TeamRegistrationView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:MatchManagementViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:MatchManagementView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:StandingsViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:StandingsView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:BracketViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:BracketView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:PlayerRosterViewModel}">
+            <materialDesign:TransitioningContent
+                OpeningEffect="{materialDesign:TransitionEffect Kind=SlideInFromBottom, Duration=0:0:0.45}">
+                <views:PlayerRosterView />
+            </materialDesign:TransitioningContent>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid x:Name="RootGrid">
+        <materialDesign:DialogHost Identifier="RootDialog" DialogTheme="Inherit">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="56" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- ============ TOP BAR ============ -->
+                <Border Grid.Row="0" Background="White" Effect="{StaticResource TopBarShadow}" Panel.ZIndex="2">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+                            <Border Width="34" Height="34" CornerRadius="10" Background="{StaticResource GradientIndigoBrush}">
+                                <materialDesign:PackIcon Kind="Trophy" Width="20" Height="20" Foreground="White"
+                                                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock Text="{Binding AppTitle}" Margin="12,0,0,0" FontSize="17" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" />
+                            <TextBlock Text="Sistem Informasi Manajemen Turnamen" Margin="12,2,0,0" FontSize="12"
+                                       Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource WindowButtonStyle}" Click="OnMinimizeClick"
+                                    WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Minimize">
+                                <materialDesign:PackIcon Kind="WindowMinimize" Width="16" Height="16" />
+                            </Button>
+                            <Button Style="{StaticResource WindowButtonStyle}" Click="OnMaximizeRestoreClick"
+                                    WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Maximize / Restore">
+                                <materialDesign:PackIcon x:Name="MaximizeRestoreIcon" Kind="WindowMaximize" Width="16" Height="16" />
+                            </Button>
+                            <Button Style="{StaticResource CloseButtonStyle}" Click="OnCloseClick"
+                                    WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Close">
+                                <materialDesign:PackIcon Kind="WindowClose" Width="16" Height="16" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ============ BODY ============ -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="248" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Sidebar -->
+                    <Border Grid.Column="0" Background="{StaticResource SidebarBrush}">
+                        <Grid Margin="16,24,16,16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="MENU" Margin="16,0,0,10" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="#8B90C4" />
+
+                            <ListBox Grid.Row="1"
+                                     ItemsSource="{Binding MenuItems}"
+                                     SelectedItem="{Binding SelectedMenuItem, Mode=TwoWay}"
+                                     ItemContainerStyle="{StaticResource NavListBoxItemStyle}"
+                                     Background="Transparent" BorderThickness="0"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="{Binding Icon}" Width="22" Height="22"
+                                                                     VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding Title}" Margin="14,0,0,0" FontSize="14"
+                                                       FontWeight="Medium" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+
+                            <StackPanel Grid.Row="2">
+                                <Separator Background="#33FFFFFF" Margin="8,0,8,12" />
+                                
+                                <Button Command="{Binding BackupDatabaseCommand}"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Foreground="#C7CBE6"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8"
+                                        Height="38"
+                                        materialDesign:ButtonAssist.CornerRadius="8"
+                                        ToolTip="Backup database ke file .bak">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="DatabaseExport" Width="18" Height="18" VerticalAlignment="Center" />
+                                        <TextBlock Text="Backup Database" Margin="10,0,0,0" FontSize="13" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Command="{Binding RestoreDatabaseCommand}"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Foreground="#C7CBE6"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8"
+                                        Height="38"
+                                        materialDesign:ButtonAssist.CornerRadius="8"
+                                        ToolTip="Restore database dari file .bak">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="DatabaseImport" Width="18" Height="18" VerticalAlignment="Center" />
+                                        <TextBlock Text="Restore Database" Margin="10,0,0,0" FontSize="13" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
+                                <TextBlock Text="v2.0 · .NET 10 · SQL Server" FontSize="11"
+                                           Foreground="#8B90C4" Margin="16,10,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Area konten + Snackbar notifikasi -->
+                    <Grid Grid.Column="1">
+                        <ContentControl Content="{Binding CurrentViewModel}" Margin="28,24,28,24" />
+                        <materialDesign:Snackbar MessageQueue="{Binding SnackbarQueue}"
+                                                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                                 Margin="0,0,0,24" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </materialDesign:DialogHost>
+    </Grid>
+</Window>

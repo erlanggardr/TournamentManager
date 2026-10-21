@@ -1,0 +1,340 @@
+<UserControl x:Class="TournamentManager.Views.MatchManagementView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <UserControl.Resources>
+        <Style x:Key="CardIconButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignIconButton}">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="3,0" />
+        </Style>
+
+        <!-- Kartu pertandingan: tampilan berubah otomatis sesuai Status lewat DataTrigger -->
+        <DataTemplate x:Key="MatchCardTemplate">
+            <Border Style="{StaticResource CardStyle}" Margin="4,2,4,14" Padding="0" Cursor="Hand"
+                    PreviewMouseLeftButtonDown="OnCardPreviewMouseDown"
+                    PreviewMouseMove="OnCardPreviewMouseMove">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Garis aksen status -->
+                    <Border x:Name="Accent" Grid.Row="0" Height="5" CornerRadius="16,16,0,0" Background="#94A3B8" />
+
+                    <StackPanel Grid.Row="1" Margin="16,12,16,16">
+                        <!-- Header: babak + chip status -->
+                        <Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Round}" FontWeight="SemiBold" />
+                                <TextBlock Text="{Binding ScheduledAt, StringFormat={}{0:dd MMM yyyy · HH:mm}}"
+                                           FontSize="12" Foreground="{StaticResource TextMutedBrush}" />
+                            </StackPanel>
+                            <Border x:Name="StatusChip" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    CornerRadius="10" Padding="10,3" Background="#E2E8F0">
+                                <TextBlock x:Name="StatusLabel" Text="Belum Mulai" FontSize="12" FontWeight="SemiBold"
+                                           Foreground="#475569" />
+                            </Border>
+                        </Grid>
+
+                        <!-- Tim A vs Tim B + skor -->
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding TeamAName}" FontWeight="Bold" TextWrapping="Wrap"
+                                       TextAlignment="Center" VerticalAlignment="Center" />
+                            <Border Grid.Column="1" CornerRadius="12" Background="#EEF2FF" Padding="14,6" Margin="10,0">
+                                <TextBlock Text="{Binding ScoreText}" FontSize="22" FontWeight="Bold"
+                                           Foreground="{StaticResource AccentBrush}" />
+                            </Border>
+                            <TextBlock Grid.Column="2" Text="{Binding TeamBName}" FontWeight="Bold" TextWrapping="Wrap"
+                                       TextAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+
+                        <!-- Hasil (Selesai) -->
+                        <TextBlock x:Name="WinnerText" Text="{Binding WinnerText}" Visibility="Collapsed"
+                                   HorizontalAlignment="Center" Margin="0,12,0,0"
+                                   FontWeight="SemiBold" Foreground="#047857" />
+
+                        <!-- Kontrol skor (On Progress) -->
+                        <Grid x:Name="ScoreControls" Margin="0,12,0,0" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource CardIconButtonStyle}" ToolTip="Kurangi skor Tim A"
+                                        Command="{Binding DataContext.SubScoreACommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="MinusCircleOutline" Width="22" Height="22" />
+                                </Button>
+                                <Button Style="{StaticResource CardIconButtonStyle}" ToolTip="Tambah skor Tim A"
+                                        Foreground="{StaticResource AccentBrush}"
+                                        Command="{Binding DataContext.AddScoreACommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="PlusCircle" Width="24" Height="24" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource CardIconButtonStyle}" ToolTip="Kurangi skor Tim B"
+                                        Command="{Binding DataContext.SubScoreBCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="MinusCircleOutline" Width="22" Height="22" />
+                                </Button>
+                                <Button Style="{StaticResource CardIconButtonStyle}" ToolTip="Tambah skor Tim B"
+                                        Foreground="{StaticResource AccentBrush}"
+                                        Command="{Binding DataContext.AddScoreBCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <materialDesign:PackIcon Kind="PlusCircle" Width="24" Height="24" />
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Aksi: Belum Mulai -->
+                        <Grid x:Name="NotStartedActions" Margin="0,14,0,0" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Height="38" materialDesign:ButtonAssist.CornerRadius="10"
+                                    Command="{Binding DataContext.StartMatchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="Play" Width="18" Height="18" VerticalAlignment="Center" />
+                                    <TextBlock Text="Mulai" Margin="6,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="1" Style="{StaticResource CardIconButtonStyle}" Margin="8,0,0,0"
+                                    ToolTip="Batalkan jadwal" Foreground="#DC2626"
+                                    Command="{Binding DataContext.DeleteMatchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}">
+                                <materialDesign:PackIcon Kind="DeleteOutline" Width="22" Height="22" />
+                            </Button>
+                        </Grid>
+
+                        <!-- Aksi: On Progress -->
+                        <Button x:Name="FinishButton" Margin="0,12,0,0" Height="38" Visibility="Collapsed"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="10"
+                                Command="{Binding DataContext.FinishMatchCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                CommandParameter="{Binding}">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="FlagCheckered" Width="18" Height="18" VerticalAlignment="Center" />
+                                <TextBlock Text="Akhiri Pertandingan" Margin="6,0,0,0" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="NotStarted">
+                    <Setter TargetName="NotStartedActions" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Status}" Value="InProgress">
+                    <Setter TargetName="Accent" Property="Background" Value="#F59E0B" />
+                    <Setter TargetName="StatusChip" Property="Background" Value="#FEF3C7" />
+                    <Setter TargetName="StatusLabel" Property="Text" Value="On Progress" />
+                    <Setter TargetName="StatusLabel" Property="Foreground" Value="#B45309" />
+                    <Setter TargetName="ScoreControls" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="FinishButton" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding Status}" Value="Completed">
+                    <Setter TargetName="Accent" Property="Background" Value="#10B981" />
+                    <Setter TargetName="StatusChip" Property="Background" Value="#D1FAE5" />
+                    <Setter TargetName="StatusLabel" Property="Text" Value="Selesai" />
+                    <Setter TargetName="StatusLabel" Property="Foreground" Value="#047857" />
+                    <Setter TargetName="WinnerText" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header & Action/Filter Bar -->
+        <Grid Grid.Row="0" Margin="0,0,0,18">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Manajemen Pertandingan" Style="{StaticResource PageTitleStyle}" />
+                <TextBlock Text="Jadwalkan, mulai, drag &amp; drop kartu antar kolom, update skor, dan filter" Style="{StaticResource PageSubtitleStyle}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <!-- Pencarian -->
+                <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" VerticalAlignment="Center"
+                                         Foreground="{StaticResource TextMutedBrush}" />
+                <TextBox Width="160" Margin="6,0,12,0" materialDesign:HintAssist.Hint="Cari tim/babak..."
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+
+                <!-- Filter Babak -->
+                <ComboBox Width="140" Margin="0,0,12,0"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          materialDesign:HintAssist.Hint="Filter Babak"
+                          ItemsSource="{Binding AvailableRounds}"
+                          SelectedItem="{Binding SelectedRoundFilter}" />
+
+                <!-- Tombol Export Excel -->
+                <Button Height="38" Margin="0,0,8,0"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="10"
+                        Command="{Binding ExportExcelCommand}" ToolTip="Ekspor Jadwal ke Excel">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FileExcel" Width="18" Height="18" Foreground="#107C41" VerticalAlignment="Center" />
+                        <TextBlock Text="Excel" Margin="6,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+
+                <!-- Tombol Export PDF -->
+                <Button Height="38"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        materialDesign:ButtonAssist.CornerRadius="10"
+                        Command="{Binding ExportPdfCommand}" ToolTip="Ekspor Jadwal ke PDF">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FilePdfBox" Width="18" Height="18" Foreground="#DC2626" VerticalAlignment="Center" />
+                        <TextBlock Text="PDF" Margin="6,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- ============ FORM PERTANDINGAN BARU ============ -->
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20,16" Margin="0,0,0,20">
+            <WrapPanel VerticalAlignment="Center">
+                <ComboBox Width="190" Margin="0,4,12,4"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          materialDesign:HintAssist.Hint="Tim A"
+                          ItemsSource="{Binding ApprovedTeams}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedTeamA}" />
+
+                <TextBlock Text="VS" FontWeight="Bold" Foreground="{StaticResource TextMutedBrush}"
+                           VerticalAlignment="Center" Margin="0,0,12,0" />
+
+                <ComboBox Width="190" Margin="0,4,12,4"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                          materialDesign:HintAssist.Hint="Tim B"
+                          ItemsSource="{Binding ApprovedTeams}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedTeamB}" />
+
+                <TextBox Width="150" Margin="0,4,12,4"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         materialDesign:HintAssist.Hint="Babak"
+                         Text="{Binding Round, UpdateSourceTrigger=PropertyChanged}" />
+
+                <DatePicker Width="150" Margin="0,4,12,4"
+                            Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                            materialDesign:HintAssist.Hint="Tanggal"
+                            SelectedDate="{Binding ScheduledDate}" />
+
+                <materialDesign:TimePicker Width="110" Margin="0,4,16,4" Is24Hours="True"
+                                           Style="{StaticResource MaterialDesignOutlinedTimePicker}"
+                                           materialDesign:HintAssist.Hint="Jam"
+                                           SelectedTime="{Binding ScheduledTime}" />
+
+                <Button Height="44" Margin="0,4,0,4" materialDesign:ButtonAssist.CornerRadius="12"
+                        Command="{Binding CreateMatchCommand}">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CalendarPlus" Width="18" Height="18" VerticalAlignment="Center" />
+                        <TextBlock Text="Jadwalkan" Margin="8,0,0,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </WrapPanel>
+        </Border>
+
+        <!-- ============ KANBAN BOARD ============ -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Kolom: Belum Mulai -->
+            <Border Grid.Column="0" Background="#E9ECF6" CornerRadius="18" Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="6,2,6,12">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="10" Height="10" Fill="#94A3B8" />
+                            <TextBlock Text="Belum Mulai" FontWeight="SemiBold" FontSize="15" Margin="10,0,0,0" />
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" CornerRadius="10" Background="White" Padding="10,2">
+                            <TextBlock Text="{Binding NotStartedMatches.Count}" FontWeight="Bold" />
+                        </Border>
+                    </Grid>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding NotStartedMatches}"
+                                      ItemTemplate="{StaticResource MatchCardTemplate}" />
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Kolom: On Progress -->
+            <Border Grid.Column="2" Background="#FDF3E1" CornerRadius="18" Padding="12"
+                    AllowDrop="True" Drop="OnColumnDrop" DragOver="OnColumnDragOver" Tag="InProgress">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="6,2,6,12">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="10" Height="10" Fill="#F59E0B" />
+                            <TextBlock Text="On Progress" FontWeight="SemiBold" FontSize="15" Margin="10,0,0,0" />
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" CornerRadius="10" Background="White" Padding="10,2">
+                            <TextBlock Text="{Binding InProgressMatches.Count}" FontWeight="Bold" />
+                        </Border>
+                    </Grid>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding InProgressMatches}"
+                                      ItemTemplate="{StaticResource MatchCardTemplate}" />
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- Kolom: Selesai -->
+            <Border Grid.Column="4" Background="#E4F5EE" CornerRadius="18" Padding="12"
+                    AllowDrop="True" Drop="OnColumnDrop" DragOver="OnColumnDragOver" Tag="Completed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid Margin="6,2,6,12">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="10" Height="10" Fill="#10B981" />
+                            <TextBlock Text="Selesai" FontWeight="SemiBold" FontSize="15" Margin="10,0,0,0" />
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" CornerRadius="10" Background="White" Padding="10,2">
+                            <TextBlock Text="{Binding CompletedMatches.Count}" FontWeight="Bold" />
+                        </Border>
+                    </Grid>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding CompletedMatches}"
+                                      ItemTemplate="{StaticResource MatchCardTemplate}" />
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>
