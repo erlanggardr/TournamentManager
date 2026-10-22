@@ -144,12 +144,26 @@ public partial class StandingsViewModel : ObservableObject
                 ? completedMatches
                 : completedMatches.Where(m => m.Round == SelectedRound).ToList();
 
-            // Inisialisasi statistik untuk seluruh tim yang disetujui (Format Valorant / VLR.gg)
+            // Inisialisasi statistik untuk tim yang relevan (Format Valorant / VLR.gg)
             // tuple: (Name, MatchesPlayed, MatchesWon, MatchesLost, MapsWon, MapsLost)
             var stats = new Dictionary<int, (string Name, int MP, int MW, int ML, int MapsW, int MapsL)>();
-            foreach (var team in approvedTeams)
+            if (SelectedRound == "Semua Babak")
             {
-                stats[team.Id] = (team.Name, 0, 0, 0, 0, 0);
+                foreach (var team in approvedTeams)
+                {
+                    stats[team.Id] = (team.Name, 0, 0, 0, 0, 0);
+                }
+            }
+            else
+            {
+                // Bila filter babak dipilih, hanya inisialisasi tim yang bermain di babak tersebut
+                var roundTeamIds = filtered.Select(m => m.TeamAId).Concat(filtered.Select(m => m.TeamBId)).Distinct();
+                foreach (var teamId in roundTeamIds)
+                {
+                    var t = approvedTeams.FirstOrDefault(x => x.Id == teamId);
+                    if (t != null)
+                        stats[t.Id] = (t.Name, 0, 0, 0, 0, 0);
+                }
             }
 
             foreach (var m in filtered)

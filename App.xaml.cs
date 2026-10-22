@@ -33,6 +33,17 @@ public partial class App : Application
         ConfigureServices(services);
         Services = services.BuildServiceProvider();
 
+        // Opsi CLI: isi ulang database dengan data contoh lalu keluar
+        if (e.Args.Contains("--reseed"))
+        {
+            using (var db = Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
+            {
+                DbInitializer.ReSeed(db);
+            }
+            Shutdown(0);
+            return;
+        }
+
         // Pastikan database ada + isi data contoh saat pertama kali dijalankan
         using (var db = Services.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext())
         {

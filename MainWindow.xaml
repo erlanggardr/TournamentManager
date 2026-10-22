@@ -171,6 +171,20 @@
                                     </StackPanel>
                                 </Button>
 
+                                <Button Command="{Binding ResetSampleDataCommand}"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Foreground="#C7CBE6"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8"
+                                        Height="38"
+                                        materialDesign:ButtonAssist.CornerRadius="8"
+                                        ToolTip="Reset database ke data contoh turnamen VCT">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="DatabaseSync" Width="18" Height="18" VerticalAlignment="Center" />
+                                        <TextBlock Text="Reset Data Contoh" Margin="10,0,0,0" FontSize="13" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+
                                 <TextBlock Text="v2.0 · .NET 10 · SQL Server" FontSize="11"
                                            Foreground="#8B90C4" Margin="14,10,0,0" />
                             </StackPanel>

@@ -266,6 +266,12 @@ public partial class BracketViewModel : ObservableObject
         {
             await using var db = await _factory.CreateDbContextAsync();
 
+            var activeTournament = await db.Tournaments.AsNoTracking().FirstOrDefaultAsync(t => t.IsActive);
+            if (activeTournament != null)
+            {
+                SelectedFormat = activeTournament.Type;
+            }
+
             var teams = await db.Teams
                 .AsNoTracking()
                 .Where(t => t.Status == RegistrationStatus.Approved)

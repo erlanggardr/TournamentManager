@@ -59,7 +59,7 @@
             <!-- Aksi & Filter -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <!-- Filter Babak -->
-                <ComboBox Width="160" Margin="0,0,12,0"
+                <ComboBox Width="190" Margin="0,0,12,0"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}"
                           materialDesign:HintAssist.Hint="Filter Babak"
                           ItemsSource="{Binding AvailableRounds}"

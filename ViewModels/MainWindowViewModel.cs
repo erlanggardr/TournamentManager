@@ -2,7 +2,9 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MaterialDesignThemes.Wpf;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TournamentManager.Data;
 using TournamentManager.Services;
 
 namespace TournamentManager.ViewModels;
@@ -101,6 +103,34 @@ public partial class MainWindowViewModel : ObservableObject
         catch (Exception ex)
         {
             SnackbarQueue.Enqueue($"Gagal melakukan restore: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task ResetSampleDataAsync()
+    {
+        var confirmed = await _dialogService.ConfirmAsync(
+            "Reset ke Data Contoh",
+            "PERINGATAN: Seluruh data saat ini akan diganti dengan data contoh turnamen VCT resmi (8 tim disetujui, tim pending/rejected, roster 7 pemain per tim, pertandingan live & selesai, dan klasemen). Lanjutkan?");
+        if (!confirmed) return;
+
+        try
+        {
+            await using var db = await _serviceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContextAsync();
+            DbInitializer.ReSeed(db);
+
+            SnackbarQueue.Enqueue("Database berhasil di-reset ke data contoh VCT!");
+
+            // Refresh halaman aktif saat ini
+            if (SelectedMenuItem != null)
+            {
+                (CurrentViewModel as IDisposable)?.Dispose();
+                CurrentViewModel = _serviceProvider.GetRequiredService(SelectedMenuItem.ViewModelType);
+            }
+        }
+        catch (Exception ex)
+        {
+            SnackbarQueue.Enqueue($"Gagal melakukan reset data contoh: {ex.Message}");
         }
     }
 }

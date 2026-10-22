@@ -36,6 +36,9 @@ public partial class DashboardViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     private string _lastUpdated = "-";
 
+    [ObservableProperty]
+    private string _tournamentName = "VALORANT Champions Tour 2026: Pacific Stage 1";
+
     public ObservableCollection<Match> LiveMatches { get; } = new();
 
     private async Task LoadAsync()
@@ -43,6 +46,10 @@ public partial class DashboardViewModel : ObservableObject, IDisposable
         try
         {
             await using var db = await _factory.CreateDbContextAsync();
+
+            var activeTournament = await db.Tournaments.AsNoTracking().FirstOrDefaultAsync(t => t.IsActive);
+            if (activeTournament != null)
+                TournamentName = activeTournament.Name;
 
             TotalTeams = await db.Teams.CountAsync();
             OngoingMatches = await db.Matches.CountAsync(m => m.Status == MatchStatus.InProgress);

@@ -41,9 +41,11 @@
 
         <!-- Judul halaman -->
         <StackPanel Grid.Row="0" Margin="0,0,0,22">
-            <TextBlock Text="Dashboard" Style="{StaticResource PageTitleStyle}" />
+            <TextBlock Text="Dashboard Turnamen" Style="{StaticResource PageTitleStyle}" />
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Ringkasan turnamen · diperbarui otomatis, terakhir " Style="{StaticResource PageSubtitleStyle}" />
+                <TextBlock Text="{Binding TournamentName, StringFormat={}{0} · }"
+                           Style="{StaticResource PageSubtitleStyle}" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                <TextBlock Text="diperbarui otomatis, terakhir " Style="{StaticResource PageSubtitleStyle}" />
                 <TextBlock Text="{Binding LastUpdated}" Style="{StaticResource PageSubtitleStyle}" FontWeight="SemiBold" />
             </StackPanel>
         </StackPanel>

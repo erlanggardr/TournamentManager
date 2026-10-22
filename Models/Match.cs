@@ -31,6 +31,7 @@ public partial class Match : ObservableObject
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(WinnerText))]
     [NotifyPropertyChangedFor(nameof(ElapsedText))]
+    [NotifyPropertyChangedFor(nameof(StatusDisplayName))]
     private MatchStatus _status = MatchStatus.NotStarted;
 
     public DateTime ScheduledAt { get; set; } = DateTime.Now;
@@ -74,4 +75,13 @@ public partial class Match : ObservableObject
             return $"{(int)Math.Max(0, span.TotalMinutes)} menit";
         }
     }
+
+    /// <summary>Label status pertandingan dalam Bahasa Indonesia.</summary>
+    public string StatusDisplayName => Status switch
+    {
+        MatchStatus.NotStarted => "Belum Mulai",
+        MatchStatus.InProgress => "On Progress",
+        MatchStatus.Completed  => "Selesai",
+        _                      => Status.ToString()
+    };
 }

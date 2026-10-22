@@ -130,7 +130,7 @@
                                             ElementStyle="{StaticResource BoldCellStyle}" />
                         <DataGridTextColumn Header="Jadwal" Binding="{Binding ScheduledAt, StringFormat={}{0:dd MMM yyyy · HH:mm}}" Width="1.5*" MinWidth="125"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*" MinWidth="85"
+                        <DataGridTextColumn Header="Status" Binding="{Binding StatusDisplayName}" Width="1*" MinWidth="85"
                                             ElementStyle="{StaticResource MutedCellStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
